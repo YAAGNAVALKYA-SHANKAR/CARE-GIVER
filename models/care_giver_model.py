@@ -7,6 +7,3 @@ class CareGiver(BaseModel):
     assigned_facility:str=Field(...)
     permissions:str=Field(...)
     device_info:str=Field(...)
-    
-
-    #user_id, name, role, license_number, assigned_facility, permissions, device_info 

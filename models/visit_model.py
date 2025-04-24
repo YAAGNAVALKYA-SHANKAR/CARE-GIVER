@@ -10,7 +10,3 @@ class VisitModel(BaseModel):
     start_time:Optional[time]=Field(...)
     end_time:Optional[time]=Field(...)
     remarks:str=Field(...)
-
-
-
-#visit_id, patient_id, caregiver_id, scheduled_time, status (pending/in-progress/completed), location, start_time, end_time, remarks 

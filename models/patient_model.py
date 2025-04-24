@@ -11,6 +11,3 @@ class PatientModel(BaseModel):
     chronic_conditions:Optional[list[str]]=Field(...)
     current_medications:Optional[list[str]]=Field(...)
     assigned_caregivers:Optional[list[str]]=Field(...)
-    
-
-    #patient_id, cpr_id, name, age, gender, address, allergies[], chronic_conditions[], current_medications[], assigned_caregivers[] 
