@@ -1,6 +1,6 @@
 from fastapi.exceptions import HTTPException 
 from collections import OrderedDict
-from services.id_validator import Validators
+from general.id_validator import Validators
 from general.database import db,caregivers,patients
 
 class CareGiverServices:

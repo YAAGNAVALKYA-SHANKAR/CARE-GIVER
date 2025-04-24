@@ -1,7 +1,7 @@
 from fastapi.exceptions import HTTPException
 from collections import OrderedDict
 from general.database import visitations,db,caregivers
-from services.id_validator import Validators
+from general.id_validator import Validators
 
 class VisitServices:
     @staticmethod
