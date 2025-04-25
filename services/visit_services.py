@@ -51,7 +51,7 @@ class VisitServices:
 
     @staticmethod
     async def finish_visit(log_data):
-        return
+        return 0
 
     @staticmethod
     async def add_visit_details(visit_data):
