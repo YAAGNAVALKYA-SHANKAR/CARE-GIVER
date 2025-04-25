@@ -13,6 +13,7 @@ class PatientServices:
         result=await patients.insert_one(ordered_data)
         await db.create_collection(patient_id)
         await db[patient_id].insert_one({"function":"schedule","schedule":[]})
+        await db[patient_id].insert_one({"function":"vitals","vitals":[]})
         await patients.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
         if result:return HTTPException(status_code=200,detail=f"Patient {patient_id} added successsfully!")
         else:raise HTTPException(status_code=500,detail="Adding Patient failed!")

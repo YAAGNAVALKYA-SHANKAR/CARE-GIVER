@@ -1,6 +1,6 @@
 from fastapi.exceptions import HTTPException
 from collections import OrderedDict
-from general.database import visitations,db,caregivers,patients
+from general.database import visitations,db,caregivers,patients,logs,vitals
 from general.id_validator import Validators
 
 class VisitServices:
@@ -31,11 +31,33 @@ class VisitServices:
             else:raise HTTPException(status_code=400,detail="Visit creation failed!")
 
     @staticmethod
-    async def finish_visit(visit_data):
+    async def add_vitals(vital_data):
+        counter_doc=await vitals.find_one({"function":"ID_counter"})
+        counter_value=counter_doc["count"]if counter_doc else 1
+        vitals_id=f"VIT_{counter_value:03d}"
+        ordered_data=OrderedDict([("vitals_id",vitals_id),*vital_data.dict().items()])
+        patient_id=ordered_data['patient_id']
+        caregiver_id=ordered_data['caregiver_id']
+        valid_cg_id=await Validators.is_valid_id(caregiver_id,prefix="CG")
+        valid_pat_id=await Validators.is_valid_id(patient_id,prefix="PAT")
+        exclude=["patient_id","caregiver_id"]
+        latest_vitals= {k: v for k, v in ordered_data.items() if k not in exclude}
+        if valid_cg_id and valid_pat_id:
+            result1=await logs.insert_one(ordered_data)
+            await logs.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
+            result2=await db[patient_id].update_one({"function":"vitals"},{"$set":{"vitals":latest_vitals}})
+            if result1 and result2:raise HTTPException(status_code=200,detail=f"Vitals recorded succesfully for patient:{patient_id}")
+            else:raise HTTPException(status_code=400,detail="Adding vitals failed!")
+
+    @staticmethod
+    async def finish_visit(log_data):
+        return
+
+    @staticmethod
+    async def add_visit_details(visit_data):
         caregiver_id=visit_data["caregiver_id"]
         patient_id=visit_data["patient_id"]
         valid_cg_id=await Validators.is_valid_id(caregiver_id,prefix="CG")
         valid_pat_id=await Validators.is_valid_id(patient_id,prefix="PAT")
         if valid_cg_id and valid_pat_id:
             await db[patient_id].insert_one(visit_data)
-            await db[patient_id].update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
