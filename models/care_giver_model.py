@@ -1,5 +1,4 @@
 from pydantic import BaseModel,Field
-
 class CareGiver(BaseModel):
     name:str=Field(...)
     role:str=Field(...)

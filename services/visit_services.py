@@ -1,6 +1,6 @@
 from fastapi.exceptions import HTTPException
 from collections import OrderedDict
-from general.database import visitations,db,caregivers
+from general.database import visitations,db,caregivers,patients
 from general.id_validator import Validators
 
 class VisitServices:
@@ -25,6 +25,17 @@ class VisitServices:
             await visitations.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
             visit_details['time']=ordered_data['scheduled_time']
             visit_details['patient']=ordered_data['patient_id']
-            result=await db[assigned_caregiver].update_one({"function":"schedule"},{"$set":{"schedule":visit_details}})
-            if result:raise HTTPException(status_code=200,detail=f"Visit {visit_id} created succesfully!")
-            else:raise HTTPException(status_code=400,detail="Visit creation failed!")        
+            result1=await db[assigned_caregiver].update_one({"function":"schedule"},{"$set":{"schedule":visit_details}})
+            result2=await db[patient].update_one({"function":"schedule"},{"$set":{"schedule":visit_details}})
+            if result1 and result2:raise HTTPException(status_code=200,detail=f"Visit {visit_id} created succesfully!")
+            else:raise HTTPException(status_code=400,detail="Visit creation failed!")
+
+    @staticmethod
+    async def finish_visit(visit_data):
+        caregiver_id=visit_data["caregiver_id"]
+        patient_id=visit_data["patient_id"]
+        valid_cg_id=await Validators.is_valid_id(caregiver_id,prefix="CG")
+        valid_pat_id=await Validators.is_valid_id(patient_id,prefix="PAT")
+        if valid_cg_id and valid_pat_id:
+            await db[patient_id].insert_one(visit_data)
+            await db[patient_id].update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
