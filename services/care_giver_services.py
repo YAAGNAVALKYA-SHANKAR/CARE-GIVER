@@ -23,15 +23,16 @@ class CareGiverServices:
         if result:
             patient_cursor=patients.find({"assigned_caregivers":caregiver_id})
             patient_list=await patient_cursor.to_list(length=None)
-            for patient in patient_list:patient["_id"]=str(patient["_id"])
-            return patient_list
+            if patient_list:
+                for patient in patient_list:patient["_id"]=str(patient["_id"])
+                return patient_list
+            else:raise HTTPException(status_code=404,detail="No patients assigned!")
 
     @staticmethod
     async def my_schedule(caregiver_id):
-        result=await Validators.is_valid_id(caregiver_id,prefix="CG")
-        if result:
-            schedule=await db[caregiver_id].find_one({"function":"schedule"})
-            if not schedule:raise HTTPException(status_code=404,detail="No schedule document fouond!")
-            schedule_details=schedule["schedule"]
-            if schedule_details:return schedule_details
-            else:raise HTTPException(status_code=400,detail="Nothing Scheduled!")
+        await Validators.is_valid_id(caregiver_id,prefix="CG")
+        schedule=await db[caregiver_id].find_one({"function":"schedule"})
+        if not schedule:raise HTTPException(status_code=404,detail="No schedule document fouond!")
+        schedule_details=schedule["schedule"]
+        if schedule_details:return schedule_details
+        else:raise HTTPException(status_code=400,detail="Nothing Scheduled!")

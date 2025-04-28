@@ -1,7 +1,7 @@
 from fastapi.exceptions import HTTPException 
 from collections import OrderedDict
 from general.id_validator import Validators
-from general.database import db, patients
+from general.database import db,patients
 
 class PatientServices:
     @staticmethod
@@ -10,6 +10,8 @@ class PatientServices:
         counter_value=counter_doc["count"]if counter_doc else 1
         patient_id=f"PAT_{counter_value:03d}"
         ordered_data=OrderedDict([("patient_id",patient_id),*patient_data.dict().items()])
+        assigned_caregivers=ordered_data["assigned_caregivers"]
+        for caregiver in assigned_caregivers:await Validators.is_valid_id(caregiver,prefix="CG")
         result=await patients.insert_one(ordered_data)
         await db.create_collection(patient_id)
         await db[patient_id].insert_one({"function":"schedule","schedule":[]})
