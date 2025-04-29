@@ -1,6 +1,6 @@
 from fastapi.exceptions import HTTPException 
 from collections import OrderedDict
-from general.id_validator import Validators
+from general.validators import Validators
 from general.database import db,caregivers,patients
 
 class CareGiverServices:
@@ -12,7 +12,6 @@ class CareGiverServices:
         ordered_data=OrderedDict([("caregiver_id",caregiver_id),*caregiver_data.dict().items()])
         result=await caregivers.insert_one(ordered_data)
         await db.create_collection(caregiver_id)
-        await db[caregiver_id].insert_one({"function":"schedule","schedule":[]})
         await caregivers.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
         if result:return HTTPException(status_code=200,detail=f"Caregiver {caregiver_id} added successsfully!")
         else:raise HTTPException(status_code=500,detail="Adding Caregiver failed!")
@@ -32,7 +31,7 @@ class CareGiverServices:
     async def my_schedule(caregiver_id):
         await Validators.is_valid_id(caregiver_id,prefix="CG")
         schedule=await db[caregiver_id].find_one({"function":"schedule"})
-        if not schedule:raise HTTPException(status_code=404,detail="No schedule document fouond!")
+        if not schedule:raise HTTPException(status_code=404,detail="No schedule document found!")
         schedule_details=schedule["schedule"]
         if schedule_details:return schedule_details
         else:raise HTTPException(status_code=400,detail="Nothing Scheduled!")

@@ -19,8 +19,8 @@ async def add_vitals(vitals_data:VitalsModel):
     return await service.add_vitals(vitals_data)
 
 @router.get("/start-visit/{visit_id}")
-async def start_visit(visit_id:str):
-    return await service.start_visit(visit_id)
+async def start_visit(visit_id:str,current_lat:str,current_long:str):
+    return await service.start_visit(visit_id,current_lat,current_long)
 
 @router.post("/finish-visit/{visit_id}")
 async def finish_visit(log_data:LogModel):

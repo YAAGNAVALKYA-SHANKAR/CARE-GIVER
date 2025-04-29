@@ -13,7 +13,8 @@ class VisitModel(BaseModel):
     caregiver_id:str=Field(...)
     scheduled_time:time=Field(...)
     visit_status:StatusEnum=Field(default=StatusEnum.PENDING)
-    location:list[str]=Field(...)
+    visit_latitude:float
+    visit_longitude:float
     start_time:Optional[time]=Field(...)
     end_time:Optional[time]=Field(...)
     remarks:str=Field(...)
