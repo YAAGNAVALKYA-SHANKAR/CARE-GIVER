@@ -1,15 +1,15 @@
 from fastapi.exceptions import HTTPException
 from collections import OrderedDict
+from datetime import datetime
 from general.database import visitations,db,caregivers,patients,logs,vitals
-from general.id_validator import Validators
-
+from general.validators import Validators
+radius_m=25
 class VisitServices:
     @staticmethod
     async def add_visit(visit_data):
         counter_doc=await visitations.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]if counter_doc else 1
         visit_id=f"VIS_{counter_value:03d}"
-        visit_details={}
         ordered_data=OrderedDict([("visit_id",visit_id),*visit_data.dict().items()])
         assigned_caregiver=ordered_data["caregiver_id"]
         patient=ordered_data["patient_id"]
@@ -22,12 +22,7 @@ class VisitServices:
         ordered_data['end_time']=ordered_data['end_time'].isoformat()
         await visitations.insert_one(ordered_data)
         await visitations.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
-        visit_details['time']=ordered_data['scheduled_time']
-        visit_details['patient']=ordered_data['patient_id']
-        result1=await db[assigned_caregiver].update_one({"function":"schedule"},{"$set":{"schedule":visit_details}})
-        result2=await db[patient].update_one({"function":"schedule"},{"$set":{"schedule":visit_details}})
-        if result1 and result2:raise HTTPException(status_code=200,detail=f"Visit {visit_id} created succesfully!")
-        else:raise HTTPException(status_code=400,detail="Visit creation failed!")
+        raise HTTPException(status_code=200,detail=f"Visit {visit_id} created succesfully!")
 
     @staticmethod
     async def add_vitals(vital_data):
@@ -48,11 +43,16 @@ class VisitServices:
         else:raise HTTPException(status_code=400,detail="Adding vitals failed!")
 
     @staticmethod
-    async def start_visit(visit_id):
+    async def start_visit(visit_id,current_lat,current_long):
         await Validators.is_valid_id(visit_id,prefix="VIS")
-        status_doc=await visitations.find_one({"visit_id":visit_id})
-        status=status_doc["visit_status"]
+        doc=await visitations.find_one({"visit_id":visit_id})
+        target_lat=doc["visit_latitude"]
+        target_long=doc["visit_longitude"]
+        status=doc["visit_status"]
         if status=="PENDING":
+            distance_km=await Validators.is_within_radius(current_lat,current_long,target_lat,target_long)
+            distance_m=distance_km*1000
+            if distance_m>=radius_m:raise HTTPException(status_code=403,detail="Too far from visit location.")
             await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"IN PROGRESS"}})
             visit_details=await visitations.find_one({"visit_id":visit_id})
             visit_details["_id"]=str(visit_details["_id"])
@@ -74,7 +74,6 @@ class VisitServices:
         if status=="IN PROGRESS":await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"FINISHED"}})
         elif status=="FINISHED":raise HTTPException(status_code=400,detail="Visit already completed.")
         elif status=="PENDING":raise HTTPException(status_code=400,detail="Visit not started.")
-        return 0
 
     @staticmethod
     async def add_visit_details(visit_data):
