@@ -10,7 +10,7 @@ class Validators:
         elif not result:raise HTTPException(status_code=400,detail="Invalid ID!")
 
     @staticmethod
-    async def is_within_radius(current_lat,current_long,target_lat,target_long):
+    async def distance_calculator(current_lat,current_long,target_lat,target_long):
         R=6371.0
         lat1_rad,lon1_rad,lat2_rad,lon2_rad=map(radians,[current_lat,current_long,target_lat,target_long])
         dlat=lat2_rad-lat1_rad

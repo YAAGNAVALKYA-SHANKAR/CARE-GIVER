@@ -1,7 +1,6 @@
 from fastapi.exceptions import HTTPException
 from collections import OrderedDict
-from datetime import datetime
-from general.database import visitations,db,caregivers,patients,logs,vitals
+from general.database import visitations,db,caregivers,vitals
 from general.validators import Validators
 radius_m=25
 class VisitServices:
@@ -50,7 +49,7 @@ class VisitServices:
         target_long=doc["visit_longitude"]
         status=doc["visit_status"]
         if status=="PENDING":
-            distance_km=await Validators.is_within_radius(current_lat,current_long,target_lat,target_long)
+            distance_km=await Validators.distance_calculator(current_lat,current_long,target_lat,target_long)
             distance_m=distance_km*1000
             if distance_m>=radius_m:raise HTTPException(status_code=403,detail="Too far from visit location.")
             await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"IN PROGRESS"}})
