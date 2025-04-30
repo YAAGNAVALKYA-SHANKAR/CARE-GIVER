@@ -22,9 +22,8 @@ class PatientServices:
 
     @staticmethod
     async def find_patient(patient_id):
-        result=await Validators.is_valid_id(patient_id,prefix="PAT")
-        if result:
-            patient=await patients.find_one({"patient_id":patient_id})
-            patient["_id"]=str(patient["_id"])
-            if not patient:raise HTTPException(status_code=404,detail=f"Patient {patient_id} not found!")
-            return patient
+        await Validators.is_valid_id(patient_id,prefix="PAT")
+        patient=await patients.find_one({"patient_id":patient_id})
+        patient["_id"]=str(patient["_id"])
+        if not patient:raise HTTPException(status_code=404,detail=f"Patient {patient_id} not found!")
+        return patient

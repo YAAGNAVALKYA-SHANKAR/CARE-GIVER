@@ -26,21 +26,16 @@ class CareGiverServices:
             return patient_list
         else:raise HTTPException(status_code=404,detail="No patients assigned!")
 
-    # @staticmethod
-    # async def my_schedule(caregiver_id):
-    #     await Validators.is_valid_id(caregiver_id,prefix="CG")
-    #     schedule=await db[caregiver_id].find_one({"function":"schedule"})
-    #     if not schedule:raise HTTPException(status_code=404,detail="No schedule document found!")
-    #     schedule_details=schedule["schedule"]
-    #     if schedule_details:return schedule_details
-    #     else:raise HTTPException(status_code=400,detail="Nothing Scheduled!")
-
     @staticmethod
     async def my_schedule(caregiver_id):
         await Validators.is_valid_id(caregiver_id,prefix="CG")
         cursor=visitations.find({"caregiver_id":caregiver_id})
         visits=await cursor.to_list(length=None)
         if visits:
-            for visit in visits:visit["_id"]=str(visit["_id"])
+            for visit in visits:
+                visit["_id"]=str(visit["_id"])
+                patient_id=visit["patient_id"]
+                patient_name=await patients.find_one({"patient_id":patient_id})
+                visit["patient_name"]=patient_name["name"]
             return visits
         else:raise HTTPException(status_code=404,detail="No visits scheduled!")
