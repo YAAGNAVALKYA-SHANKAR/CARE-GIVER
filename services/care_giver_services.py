@@ -1,7 +1,7 @@
 from fastapi.exceptions import HTTPException 
 from collections import OrderedDict
 from general.validators import Validators
-from general.database import db,caregivers,patients
+from general.database import db,caregivers,patients,visitations
 
 class CareGiverServices:
     @staticmethod
@@ -18,20 +18,29 @@ class CareGiverServices:
 
     @staticmethod
     async def patient_list(caregiver_id):
-        result=await Validators.is_valid_id(caregiver_id,prefix="CG")
-        if result:
-            patient_cursor=patients.find({"assigned_caregivers":caregiver_id})
-            patient_list=await patient_cursor.to_list(length=None)
-            if patient_list:
-                for patient in patient_list:patient["_id"]=str(patient["_id"])
-                return patient_list
-            else:raise HTTPException(status_code=404,detail="No patients assigned!")
+        await Validators.is_valid_id(caregiver_id,prefix="CG")
+        patient_cursor=patients.find({"assigned_caregivers":caregiver_id})
+        patient_list=await patient_cursor.to_list(length=None)
+        if patient_list:
+            for patient in patient_list:patient["_id"]=str(patient["_id"])
+            return patient_list
+        else:raise HTTPException(status_code=404,detail="No patients assigned!")
+
+    # @staticmethod
+    # async def my_schedule(caregiver_id):
+    #     await Validators.is_valid_id(caregiver_id,prefix="CG")
+    #     schedule=await db[caregiver_id].find_one({"function":"schedule"})
+    #     if not schedule:raise HTTPException(status_code=404,detail="No schedule document found!")
+    #     schedule_details=schedule["schedule"]
+    #     if schedule_details:return schedule_details
+    #     else:raise HTTPException(status_code=400,detail="Nothing Scheduled!")
 
     @staticmethod
     async def my_schedule(caregiver_id):
         await Validators.is_valid_id(caregiver_id,prefix="CG")
-        schedule=await db[caregiver_id].find_one({"function":"schedule"})
-        if not schedule:raise HTTPException(status_code=404,detail="No schedule document found!")
-        schedule_details=schedule["schedule"]
-        if schedule_details:return schedule_details
-        else:raise HTTPException(status_code=400,detail="Nothing Scheduled!")
+        cursor=visitations.find({"caregiver_id":caregiver_id})
+        visits=await cursor.to_list(length=None)
+        if visits:
+            for visit in visits:visit["_id"]=str(visit["_id"])
+            return visits
+        else:raise HTTPException(status_code=404,detail="No visits scheduled!")
