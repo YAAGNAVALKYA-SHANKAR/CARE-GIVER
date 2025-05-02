@@ -1,6 +1,6 @@
 from fastapi.exceptions import HTTPException 
 from collections import OrderedDict
-from general.validators import Validators
+from general.security import Security
 from general.database import db,caregivers,patients,visitations
 
 class CareGiverServices:
@@ -18,7 +18,7 @@ class CareGiverServices:
 
     @staticmethod
     async def patient_list(caregiver_id):
-        await Validators.is_valid_id(caregiver_id,prefix="CG")
+        await Security.is_valid_id(caregiver_id,prefix="CG")
         patient_cursor=patients.find({"assigned_caregivers":caregiver_id})
         patient_list=await patient_cursor.to_list(length=None)
         if patient_list:
@@ -28,7 +28,7 @@ class CareGiverServices:
 
     @staticmethod
     async def my_schedule(caregiver_id):
-        await Validators.is_valid_id(caregiver_id,prefix="CG")
+        await Security.is_valid_id(caregiver_id,prefix="CG")
         cursor=visitations.find({"caregiver_id":caregiver_id})
         visits=await cursor.to_list(length=None)
         if visits:

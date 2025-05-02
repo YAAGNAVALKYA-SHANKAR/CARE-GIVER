@@ -1,7 +1,9 @@
 import re
 from math import radians, cos, sin, asin, sqrt
 from fastapi.exceptions import HTTPException
-class Validators:
+from passlib.context import CryptContext
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+class Security:
     @staticmethod
     async def is_valid_id(id_str:str,prefix:str)->bool:
         pattern=rf"^{prefix}_[0-9]{{3}}$"
@@ -19,3 +21,11 @@ class Validators:
         c=2*asin(sqrt(a))
         distance_km=R*c
         return distance_km
+
+    @staticmethod
+    async def hash_password(password:str)->str:
+            return pwd_context.hash(password)
+
+    @staticmethod
+    async def verify_password(plain_password:str,hashed_password: str)->bool:
+            return pwd_context.verify(plain_password, hashed_password)
