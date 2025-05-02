@@ -54,8 +54,9 @@ class LoginServices:
         user.pop("_id", None)
         user.pop("password", None)
         user.pop("is_active", None)
-        user.pop("role", None)
         user.pop("user_id", None)
+        user.pop("failed_attempts", None)
+        user.pop("is_locked", None)
 
         return {"success": True, "message": "Login successful.", "user_details": user}
 
