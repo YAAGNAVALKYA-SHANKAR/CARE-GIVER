@@ -11,7 +11,7 @@ class CareGiverServices:
         ordered_data=OrderedDict([("caregiver_id",caregiver_id),*caregiver_data.dict().items()])
         result=await caregivers.insert_one(ordered_data)
         await db.create_collection(caregiver_id)
-        await caregivers.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
+        await caregivers.update_one({"function":"ID_counter"},{"$inc":{"count":1}})
         if result:raise HTTPException(status_code=200,detail=f"Caregiver {caregiver_id} added successsfully!")
         else:raise HTTPException(status_code=500,detail="Adding Caregiver failed!")
     @staticmethod
