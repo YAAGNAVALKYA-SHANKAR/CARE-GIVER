@@ -1,13 +1,10 @@
 from pydantic import BaseModel,Field
 from datetime import time
-from typing import Optional
 from enum import Enum
-
 class StatusEnum(str,Enum):
     NOT_STARTED="NOT STARTED"
     PENDING="PENDING"
     FINISHED="FINISHED"
-
 class VisitModel(BaseModel):
     patient_id:str=Field(...)
     caregiver_id:str=Field(...)

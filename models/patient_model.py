@@ -1,6 +1,5 @@
 from pydantic import BaseModel,Field
 from typing import Optional
-
 class PatientModel(BaseModel):
     cpr_id:str=Field(...)
     name:str=Field(...)

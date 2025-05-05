@@ -1,5 +1,4 @@
 from pydantic import BaseModel,Field
-
 class VitalsModel(BaseModel):
     patient_id:str=Field(...)
     caregiver_id:str=Field(...)

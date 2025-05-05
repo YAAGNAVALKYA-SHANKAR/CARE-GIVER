@@ -1,6 +1,5 @@
 from typing import Optional
 from pydantic import BaseModel,EmailStr,Field
-
 class UserModel(BaseModel):
     username:str=Field(...)
     email:EmailStr=Field(...)

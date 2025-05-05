@@ -12,7 +12,6 @@ DOCTOR_ESCALATIONS=os.getenv("ESCALATIONS")
 VITAL_READINGS=os.getenv("VITALS_READING")
 LOGS=os.getenv("LOGS")
 USERS=os.getenv("USERS")
-
 client=AsyncIOMotorClient(MONGO_URI)
 db=client[DATABASE]
 caregivers=db[CAREGIVER_MASTERTABLE]
@@ -22,7 +21,6 @@ escalations=db[DOCTOR_ESCALATIONS]
 vitals=db[VITAL_READINGS]
 logs=db[LOGS]
 users=db[USERS]
-
 async def init_db():
     existing_collections=await db.list_collection_names()
     async def create_collection(collection_name):
@@ -36,7 +34,6 @@ async def init_db():
     await create_collection(VITAL_READINGS)
     await create_collection(LOGS)
     await create_collection(USERS)
-
     await caregivers.create_index([("caregiver_id",ASCENDING)],unique=True)
     await patients.create_index([("patient_id",ASCENDING)],unique=True)
     await visitations.create_index([("visit_id",ASCENDING)],unique=True)

@@ -12,8 +12,8 @@ class VisitServices:
         ordered_data=OrderedDict([("visit_id",visit_id),*visit_data.dict().items()])
         assigned_caregiver=ordered_data["caregiver_id"]
         patient=ordered_data["patient_id"]
-        await Security.is_valid_id(assigned_caregiver,prefix="CG")
-        await Security.is_valid_id(patient,prefix="PAT")
+        Security.is_valid_id(assigned_caregiver,prefix="CG")
+        Security.is_valid_id(patient,prefix="PAT")
         existing_caregiver= await caregivers.find_one({"caregiver_id": assigned_caregiver})
         if not existing_caregiver:raise HTTPException(status_code=404,detail=f"Caregiver {assigned_caregiver} does not exist!")
         ordered_data['scheduled_time']=ordered_data['scheduled_time'].isoformat()
@@ -31,8 +31,8 @@ class VisitServices:
         ordered_data=OrderedDict([("vitals_id",vitals_id),*vital_data.dict().items()])
         patient_id=ordered_data['patient_id']
         caregiver_id=ordered_data['caregiver_id']
-        await Security.is_valid_id(caregiver_id,prefix="CG")
-        await Security.is_valid_id(patient_id,prefix="PAT")
+        Security.is_valid_id(caregiver_id,prefix="CG")
+        Security.is_valid_id(patient_id,prefix="PAT")
         exclude=["patient_id","caregiver_id"]
         latest_vitals= {k: v for k, v in ordered_data.items() if k not in exclude}        
         result1=await vitals.insert_one(ordered_data)
@@ -43,7 +43,7 @@ class VisitServices:
 
     @staticmethod
     async def mark_arrival(visit_id,current_lat,current_long,method):
-        await Security.is_valid_id(visit_id,prefix="VIS")
+        Security.is_valid_id(visit_id,prefix="VIS")
         doc=await visitations.find_one({"visit_id":visit_id})
         target_lat=doc["visit_latitude"]
         target_long=doc["visit_longitude"]
@@ -65,9 +65,9 @@ class VisitServices:
         visit_id=dict_data["visit_id"]
         caregiver_id=log_data["caregiver_id"]
         patient_id=log_data["patient_id"]
-        await Security.is_valid_id(caregiver_id,prefix="CG")
-        await Security.is_valid_id(patient_id,prefix="PAT")
-        await Security.is_valid_id(visit_id,prefix="VIS")
+        Security.is_valid_id(caregiver_id,prefix="CG")
+        Security.is_valid_id(patient_id,prefix="PAT")
+        Security.is_valid_id(visit_id,prefix="VIS")
         status_doc=await visitations.find_one({"visit_id":visit_id})
         status=status_doc["visit_status"]
         if status=="IN PROGRESS":await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"FINISHED"}})
@@ -78,6 +78,6 @@ class VisitServices:
     async def add_visit_details(visit_data):
         caregiver_id=visit_data["caregiver_id"]
         patient_id=visit_data["patient_id"]
-        await Security.is_valid_id(caregiver_id,prefix="CG")
-        await Security.is_valid_id(patient_id,prefix="PAT")
+        Security.is_valid_id(caregiver_id,prefix="CG")
+        Security.is_valid_id(patient_id,prefix="PAT")
         await db[patient_id].insert_one(visit_data)

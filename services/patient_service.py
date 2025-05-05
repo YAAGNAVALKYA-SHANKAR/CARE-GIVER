@@ -11,7 +11,7 @@ class PatientServices:
         patient_id=f"PAT_{counter_value:03d}"
         ordered_data=OrderedDict([("patient_id",patient_id),*patient_data.dict().items()])
         assigned_caregivers=ordered_data["assigned_caregivers"]
-        for caregiver in assigned_caregivers:await Security.is_valid_id(caregiver,prefix="CG")
+        for caregiver in assigned_caregivers:Security.is_valid_id(caregiver,prefix="CG")
         result=await patients.insert_one(ordered_data)
         await db.create_collection(patient_id)
         await db[patient_id].insert_one({"function":"schedule","schedule":[]})
@@ -22,7 +22,7 @@ class PatientServices:
 
     @staticmethod
     async def find_patient(patient_id):
-        await Security.is_valid_id(patient_id,prefix="PAT")
+        Security.is_valid_id(patient_id,prefix="PAT")
         patient=await patients.find_one({"patient_id":patient_id})
         patient["_id"]=str(patient["_id"])
         if not patient:raise HTTPException(status_code=404,detail=f"Patient {patient_id} not found!")
