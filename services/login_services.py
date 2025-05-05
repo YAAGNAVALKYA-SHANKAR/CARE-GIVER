@@ -42,7 +42,7 @@ class LoginServices:
         counter_doc=await users.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]
         user_id=f"USER_{counter_value:04d}"
-        await users.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
+        await users.update_one({"function":"ID_counter"},{"$inc":{"count":1}})
         hashed_password=Security.hash_password(user_data.password)        
         user_dict=user_data.dict()
         user_dict["password"]=hashed_password

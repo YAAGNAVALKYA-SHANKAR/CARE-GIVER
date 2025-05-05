@@ -20,7 +20,7 @@ class VisitServices:
         # ordered_data['start_time']=ordered_data['start_time'].isoformat()
         # ordered_data['end_time']=ordered_data['end_time'].isoformat()
         await visitations.insert_one(ordered_data)
-        await visitations.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
+        await visitations.update_one({"function":"ID_counter"},{"$inc":{"count":1}})
         raise HTTPException(status_code=200,detail=f"Visit {visit_id} created succesfully!")
 
     @staticmethod
@@ -36,7 +36,7 @@ class VisitServices:
         exclude=["patient_id","caregiver_id"]
         latest_vitals= {k: v for k, v in ordered_data.items() if k not in exclude}        
         result1=await vitals.insert_one(ordered_data)
-        await vitals.update_one({"function":"ID_counter"},{"$inc":{"count":1}},upsert=True)
+        await vitals.update_one({"function":"ID_counter"},{"$inc":{"count":1}})
         result2=await db[patient_id].update_one({"function":"vitals"},{"$set":{"vitals":latest_vitals}})
         if result1 and result2:raise HTTPException(status_code=200,detail=f"Vitals recorded succesfully for patient:{patient_id}")
         else:raise HTTPException(status_code=400,detail="Adding vitals failed!")
