@@ -35,12 +35,10 @@ class LoginServices:
         return {"success":True,"message":"Login successful.","user_details":user}
     @staticmethod
     async def register_user(user_data:UserModel):
-        exisitng_caregiver=await caregivers.find_one({"email":user_data.email})
-        if not exisitng_caregiver:raise HTTPException(status_code=400,detail="Email is not registered!")
+        exisiting_caregiver=await caregivers.find_one({"email":user_data.email})
+        if not exisiting_caregiver:raise HTTPException(status_code=400,detail="Email is not registered!")
         existing_user1=await registered_users.find_one({"username":user_data.username})
         if existing_user1:return{"success":False,"message":"Username already exists."}
-        existing_user2=await registered_users.find_one({"email":user_data.email})
-        if existing_user2:return{"success":False,"message":"Email already exists."}
         counter_doc=await registered_users.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]if counter_doc else 1
         user_id=f"USER_{counter_value:04d}"
