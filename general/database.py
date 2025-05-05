@@ -40,4 +40,4 @@ async def init_db():
     await escalations.create_index([("escalation_id",ASCENDING)],unique=True)
     await vitals.create_index([("vitals_id",ASCENDING)],unique=True)
     await logs.create_index([("transaction_id",ASCENDING)],unique=True)
-    await users.create_index([("user_id",ASCENDING)],unique=True)
+    await users.create_index([("email",ASCENDING)],unique=True)
