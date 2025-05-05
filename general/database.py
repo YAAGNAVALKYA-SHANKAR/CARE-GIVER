@@ -20,7 +20,7 @@ visitations=db[VISITATION_RECORDS]
 escalations=db[DOCTOR_ESCALATIONS]
 vitals=db[VITAL_READINGS]
 logs=db[LOGS]
-users=db[USERS]
+registered_users=db[USERS]
 async def init_db():
     existing_collections=await db.list_collection_names()
     async def create_collection(collection_name):
@@ -40,4 +40,4 @@ async def init_db():
     await escalations.create_index([("escalation_id",ASCENDING)],unique=True)
     await vitals.create_index([("vitals_id",ASCENDING)],unique=True)
     await logs.create_index([("transaction_id",ASCENDING)],unique=True)
-    await users.create_index([("email",ASCENDING)],unique=True)
+    await registered_users.create_index([("email",ASCENDING)],unique=True)
