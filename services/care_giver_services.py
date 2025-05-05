@@ -8,7 +8,7 @@ class CareGiverServices:
         exisiting_caregiver=await caregivers.find_one({"email":caregiver_data.email})
         if exisiting_caregiver:raise HTTPException(status_code=400,detail="Caregiver already exists!")
         counter_doc=await caregivers.find_one({"function":"ID_counter"})
-        counter_value=counter_doc["count"]
+        counter_value=counter_doc["count"]if counter_doc else 1
         caregiver_id=f"CG_{counter_value:03d}"
         ordered_data=OrderedDict([("caregiver_id",caregiver_id),*caregiver_data.dict().items()])
         result=await caregivers.insert_one(ordered_data)
