@@ -14,9 +14,9 @@ class NursingServices:
     @staticmethod
     async def get_nursing_tasks(id):
         task_details=await nursing.find_one({"id": id})
-        task_details["_id"]=str(task_details["_id"])
         if not task_details:
             raise HTTPException(status_code=404, detail=f"Nursing task with ID {id} not found!")
+        task_details["_id"]=str(task_details["_id"])
         task_details.pop("_id",None)
         return task_details
     
