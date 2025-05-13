@@ -37,19 +37,15 @@ class LoginServices:
     async def register_user(user_data:UserModel):
         exisiting_caregiver=await caregivers.find_one({"email":user_data.email})
         if not exisiting_caregiver:raise HTTPException(status_code=400,detail="Email is not registered!")
-        existing_user1=await registered_users.find_one({"username":user_data.username})
-        if existing_user1:return{"success":False,"message":"Username already exists."}
-        existing_user2=await registered_users.find_one({"email":user_data.email})
-        if existing_user2:return{"success":False,"message":"Email already exists."}
         counter_doc=await registered_users.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]if counter_doc else 1
         user_id=f"USER_{counter_value:04d}"
         await registered_users.update_one({"function":"ID_counter"},{"$inc":{"count":1}})
-        hashed_password=Security.hash_password(user_data.password)        
-        user_dict=user_data.dict()
-        user_dict["password"]=hashed_password
-        user_dict["user_id"]=user_id
-        user_dict=OrderedDict([("user_id",user_id),*user_dict.items()])
+        hashed_password=Security.hash_password(user_data.password)
+        user_dict={}
+        user_dict["user_id"]=user_id        
+        user_dict["password"]=hashed_password    
+        user_dict["email"]=user_data.email  
         await registered_users.insert_one(user_dict)
         return {"success":True,"message":"User registered successfully."}
     @staticmethod

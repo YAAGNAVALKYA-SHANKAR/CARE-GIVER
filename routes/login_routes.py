@@ -1,11 +1,11 @@
 from fastapi import APIRouter,Depends
 from services.login_services import LoginServices
-from models.user_model import UserModel
+from models.user_model import UserModel,RegisterModel
 from general.security import Security
 service =LoginServices()
 router=APIRouter()
 @router.post("/register")
-async def register_user(user_data:UserModel):return await service.register_user(user_data)
+async def register_user(user_data:RegisterModel):return await service.register_user(user_data)
 @router.post("/login")
 async def login_user(email:str,password:str):return await service.login_user(email,password)
 @router.post("/change-password")
