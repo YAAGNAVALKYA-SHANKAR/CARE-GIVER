@@ -48,7 +48,6 @@ app.include_router(care_giver_routes.router,prefix="/Home-Care/Caregivers",tags=
 app.include_router(patient_routes.router,prefix="/Home-Care/Patients",tags=["Patients"])
 app.include_router(visit_routes.router,prefix="/Home-Care/Visitations",tags=["Visits"])
 app.include_router(login_routes.router,prefix="/Home-Care/Login",tags=["Login"])
-app.include_router(nursing_routes.router,prefix="/Home-Care/Nursing",tags=["Nursing"])
 
 app.get("/")
 def read_root():
