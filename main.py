@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from general.database import init_db
-from routes import care_giver_routes,patient_routes,visit_routes,login_routes,nursing_routes
+from routes import care_giver_routes,patient_routes,visit_routes,login_routes
 app=FastAPI()
 
 """
