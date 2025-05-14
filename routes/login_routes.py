@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends,HTTPException
 from services.login_services import LoginServices
-from models.user_model import UserModel,RegisterModel
+from models.user_model import UserModel,SignupModel
 from general.security import Security
 service =LoginServices()
 router=APIRouter()
@@ -16,7 +16,7 @@ It includes the following routes:
 """
 
 @router.post("/signup")
-async def signup_user(user_data:RegisterModel):return await service.signup_user(user_data)
+async def signup_user(user_data:SignupModel):return await service.signup_user(user_data)
 @router.post("/login")
 async def login_user(email:str,password:str):return await service.login_user(email,password)
 @router.post("/change-password")

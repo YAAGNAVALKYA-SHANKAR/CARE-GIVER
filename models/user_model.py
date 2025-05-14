@@ -12,8 +12,9 @@ class UserModel(BaseModel):
     role:Optional[str]="user"
     class Config:
         orm_mode = True
-class RegisterModel(BaseModel):
+class SignupModel(BaseModel):
     email:EmailStr=Field(...)
     password:str=Field(...,min_length=8)
+    confirm_password:str=Field(...,min_length=8)
     class Config:
         orm_mode = True

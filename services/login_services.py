@@ -2,7 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime,timedelta
 from fastapi import HTTPException
-from models.user_model import UserModel
+from models.user_model import SignupModel
 from general.database import registered_users,caregivers
 from general.security import Security
 MAX_ATTEMPTS=5
@@ -54,7 +54,7 @@ class LoginServices:
         user.pop("is_locked",None)
         return {"success":True,"message":"Login successful.","user_details":user}
     @staticmethod
-    async def signup_user(user_data:UserModel):
+    async def signup_user(user_data:SignupModel):
         """
         This function handles user registration.
         It checks if the user already exists, and if not,
@@ -62,6 +62,7 @@ class LoginServices:
         :param user_data: The data of the user to be registered.
         :return: A success message if registration is successful, otherwise an error message.
         """
+        if user_data.password!=user_data.confirm_password:return{"success":False,"message":"Passwords do not match."}
         exisiting_caregiver=await caregivers.find_one({"email":user_data.email})
         if not exisiting_caregiver:raise HTTPException(status_code=400,detail="Email is not registered!")
         existing_user=await registered_users.find_one({"email":user_data.email})
