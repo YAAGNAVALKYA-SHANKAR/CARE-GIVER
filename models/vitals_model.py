@@ -1,5 +1,8 @@
 from pydantic import BaseModel,Field
 class VitalsModel(BaseModel):
+    """
+    VitalsModel to represent a patient's vitals in the system.
+    """
     patient_id:str=Field(...)
     caregiver_id:str=Field(...)
     temperature:float=Field(...)

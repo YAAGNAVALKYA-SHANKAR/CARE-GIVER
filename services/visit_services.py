@@ -42,22 +42,29 @@ class VisitServices:
         else:raise HTTPException(status_code=400,detail="Adding vitals failed!")
 
     @staticmethod
-    async def mark_arrival(visit_id,current_lat,current_long,method):
+    async def mark_arrival(visit_id,current_lat,current_long):
         Security.is_valid_id(visit_id,prefix="VIS")
         doc=await visitations.find_one({"visit_id":visit_id})
         target_lat=doc["visit_latitude"]
         target_long=doc["visit_longitude"]
         status=doc["visit_status"]
-        if status=="PENDING":
+        if status=="NOT STARTED":
             distance_km=await Security.distance_calculator(current_lat,current_long,target_lat,target_long)
             distance_m=distance_km*1000
             if distance_m>=radius_m:raise HTTPException(status_code=403,detail="Too far from visit location.")
-            await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"PENDING"}})
-            visit_details=await visitations.find_one({"visit_id":visit_id})
-            visit_details["_id"]=str(visit_details["_id"])
-            return visit_details
-        elif status=="FINISHED":raise HTTPException(status_code=400,detail="Visit has been finished.")
+        elif status=="FINISHED":raise HTTPException(status_code=400,detail="Visit has already been finished.")
         elif status=="PENDING":raise HTTPException(status_code=400,detail="Visit in progress.")
+
+    @staticmethod
+    async def start_visit(visit_id):
+        Security.is_valid_id(visit_id,prefix="VIS")
+        doc=await visitations.find_one({"visit_id":visit_id})
+        status=doc["visit_status"]
+        if status=="NOT STARTED":
+            await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"IN PROGRESS"}})
+            await db[doc["patient_id"]].insert_one({"function":"visit","details":doc})
+        elif status=="IN PROGRESS":raise HTTPException(status_code=400,detail="Visit already started.")
+        elif status=="FINISHED":raise HTTPException(status_code=400,detail="Visit has already been finished.")
     
     @staticmethod
     async def finish_visit(log_data):
@@ -70,7 +77,9 @@ class VisitServices:
         Security.is_valid_id(visit_id,prefix="VIS")
         status_doc=await visitations.find_one({"visit_id":visit_id})
         status=status_doc["visit_status"]
-        if status=="IN PROGRESS":await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"FINISHED"}})
+        if status=="IN PROGRESS":
+            await visitations.update_one({"visit_id":visit_id},{"$set":{"visit_status":"FINISHED"}})
+            await db[patient_id].update_one({"function":"visit"},{"$set":{"visit":log_data}})
         elif status=="FINISHED":raise HTTPException(status_code=400,detail="Visit already completed.")
         elif status=="PENDING":raise HTTPException(status_code=400,detail="Visit not started.")
 
@@ -81,3 +90,4 @@ class VisitServices:
         Security.is_valid_id(caregiver_id,prefix="CG")
         Security.is_valid_id(patient_id,prefix="PAT")
         await db[patient_id].insert_one(visit_data)
+        await db[caregiver_id].insert_one(visit_data)

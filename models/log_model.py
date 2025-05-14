@@ -1,7 +1,9 @@
 from pydantic import BaseModel,Field
 from datetime import datetime
-from typing import Optional
 class LogModel(BaseModel):
+    """
+    LogModel to represent a log entry in the system.
+    """
     patient_id:str=Field(...)
     caregiver_id:str=Field(...)
     visit_id:str=Field(...)

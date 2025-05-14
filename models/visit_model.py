@@ -2,10 +2,16 @@ from pydantic import BaseModel,Field
 from datetime import time
 from enum import Enum
 class StatusEnum(str,Enum):
+    """
+    Enum for visit status.
+    """
     NOT_STARTED="NOT STARTED"
     PENDING="PENDING"
     FINISHED="FINISHED"
 class VisitModel(BaseModel):
+    """
+    VisitModel to represent a visit in the system.
+    """
     patient_id:str=Field(...)
     caregiver_id:str=Field(...)
     scheduled_time:time=Field(...)

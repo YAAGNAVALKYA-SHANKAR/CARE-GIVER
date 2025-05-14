@@ -2,9 +2,24 @@ from fastapi.exceptions import HTTPException
 from collections import OrderedDict
 from general.security import Security
 from general.database import db,caregivers,patients,visitations
+
+"""
+This module defines the services for the Caregiver API.
+It includes the following services:
+- add_caregiver: Service to add a new caregiver.
+- patient_list: Service to get the list of patients assigned to a caregiver.
+- my_schedule: Service to get the schedule of a caregiver.
+"""
+
 class CareGiverServices:
     @staticmethod
     async def add_caregiver(caregiver_data):
+        """
+        Adds a new caregiver to the system.
+        :param caregiver_data: The data of the caregiver to be added.
+        :return: A success message if the caregiver is added successfully.
+        :raises HTTPException: If the caregiver already exists or if there is an error adding the caregiver.
+        """
         exisiting_caregiver=await caregivers.find_one({"email":caregiver_data.email})
         if exisiting_caregiver:raise HTTPException(status_code=400,detail="Caregiver already exists!")
         counter_doc=await caregivers.find_one({"function":"ID_counter"})
@@ -18,6 +33,12 @@ class CareGiverServices:
         else:raise HTTPException(status_code=500,detail="Adding Caregiver failed!")
     @staticmethod
     async def patient_list(caregiver_id):
+        """
+        Gets the list of patients assigned to a caregiver.
+        :param caregiver_id: The ID of the caregiver.
+        :return: A list of patients assigned to the caregiver.
+        :raises HTTPException: If the caregiver ID is invalid or if there are no patients assigned.
+        """
         Security.is_valid_id(caregiver_id,prefix="CG")
         patient_cursor=patients.find({"assigned_caregivers":caregiver_id})
         patient_list=await patient_cursor.to_list(length=None)
@@ -27,6 +48,12 @@ class CareGiverServices:
         else:raise HTTPException(status_code=404,detail="No patients assigned!")
     @staticmethod
     async def my_schedule(caregiver_id):
+        """
+        Gets the schedule of a caregiver.
+        :param caregiver_id: The ID of the caregiver.
+        :return: A list of visitations scheduled for the caregiver.
+        :raises HTTPException: If the caregiver ID is invalid or if there are no visitations scheduled.
+        """
         Security.is_valid_id(caregiver_id,prefix="CG")
         cursor=visitations.find({"caregiver_id":caregiver_id})
         visits=await cursor.to_list(length=None)

@@ -1,5 +1,8 @@
 from pydantic import BaseModel,Field,EmailStr
 class CareGiver(BaseModel):
+    """
+    CareGiver model to represent a caregiver in the system.
+    """
     name:str=Field(...)
     role:str=Field(...)
     email:EmailStr=Field(...)

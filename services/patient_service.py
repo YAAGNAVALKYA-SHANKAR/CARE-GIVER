@@ -3,9 +3,21 @@ from collections import OrderedDict
 from general.security import Security
 from general.database import db,patients
 
+"""
+This module defines the services for the Patient API.
+It includes the following services:
+- add_patient: Service to add a new patient.
+- find_patient: Service to find a patient by their ID.
+"""
 class PatientServices:
     @staticmethod
     async def add_patient(patient_data):
+        """
+        Adds a new patient to the system.
+        :param patient_data: The data of the patient to be added.
+        :return: A success message if the patient is added successfully.
+        :raises HTTPException: If the patient already exists or if there is an error adding the patient.
+        """
         counter_doc=await patients.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]if counter_doc else 1
         patient_id=f"PAT_{counter_value:03d}"
@@ -22,6 +34,11 @@ class PatientServices:
 
     @staticmethod
     async def find_patient(patient_id):
+        """
+        Finds a patient by their ID.
+        :param patient_id: The ID of the patient to be found.
+        :return: The patient data if found.
+        """
         Security.is_valid_id(patient_id,prefix="PAT")
         patient=await patients.find_one({"patient_id":patient_id})
         patient["_id"]=str(patient["_id"])
