@@ -1,3 +1,4 @@
+import base64
 from fastapi.exceptions import HTTPException
 from collections import OrderedDict
 from general.database import visitations,db,caregivers,vitals
@@ -42,7 +43,7 @@ class VisitServices:
         else:raise HTTPException(status_code=400,detail="Adding vitals failed!")
 
     @staticmethod
-    async def mark_arrival(visit_id,current_lat,current_long):
+    async def mark_arrival(visit_id,current_lat,current_long,selfie):
         Security.is_valid_id(visit_id,prefix="VIS")
         doc=await visitations.find_one({"visit_id":visit_id})
         target_lat=doc["visit_latitude"]
@@ -53,7 +54,10 @@ class VisitServices:
             distance_m=distance_km*1000
             if distance_m>=radius_m:raise HTTPException(status_code=403,detail="Too far from visit location.")
         elif status=="FINISHED":raise HTTPException(status_code=400,detail="Visit has already been finished.")
-        elif status=="PENDING":raise HTTPException(status_code=400,detail="Visit in progress.")
+        elif status=="PENDING":
+            selfie_bytes = await selfie.read()
+            selfie_base64 = base64.b64encode(selfie_bytes).decode("utf-8")
+            await visitations.update_one({"visit_id":visit_id},{"$set":{"selfie_on_arrival":selfie_base64}})
 
     @staticmethod
     async def start_visit(visit_id):

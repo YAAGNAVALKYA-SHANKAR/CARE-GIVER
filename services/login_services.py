@@ -74,6 +74,7 @@ class LoginServices:
         await registered_users.update_one({"function":"ID_counter"},{"$inc":{"count":1}})
         hashed_password=Security.hash_password(user_data.password)
         user_dict={}
+        user_dict["username"]=user_data.username
         user_dict["user_id"]=user_id        
         user_dict["password"]=hashed_password    
         user_dict["email"]=user_data.email  
