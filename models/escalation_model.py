@@ -1,23 +1,23 @@
 from pydantic import BaseModel, Field
 from enum import Enum
 
-class EscalationStatus(str, Enum):
-    """
-    Enum for escalation status.
-    """
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    RESOLVED = "resolved"
-    CLOSED = "closed"
+# class EscalationStatus(str, Enum):
+#     """
+#     Enum for escalation status.
+#     """
+#     PENDING = "pending"
+#     IN_PROGRESS = "in_progress"
+#     RESOLVED = "resolved"
+#     CLOSED = "closed"
 
-class EscalationPriority(str, Enum):
-    """
-    Enum for escalation priority.
-    """
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+# class EscalationPriority(str, Enum):
+#     """
+#     Enum for escalation priority.
+#     """
+#     LOW = "low"
+#     MEDIUM = "medium"
+#     HIGH = "high"
+#     CRITICAL = "critical"
 
 class EscalationModel(BaseModel):
     """

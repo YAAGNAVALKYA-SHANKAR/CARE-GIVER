@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from general.database import init_db
-from routes import care_giver_routes,patient_routes,visit_routes,login_routes
+from routes import care_giver_routes,patient_routes,visit_routes,login_routes,escalation_routes
 app=FastAPI()
 
 """
@@ -48,6 +48,7 @@ app.include_router(care_giver_routes.router,prefix="/Home-Care/Caregivers",tags=
 app.include_router(patient_routes.router,prefix="/Home-Care/Patients",tags=["Patients"])
 app.include_router(visit_routes.router,prefix="/Home-Care/Visitations",tags=["Visits"])
 app.include_router(login_routes.router,prefix="/Home-Care/Login",tags=["Login"])
+app.include_router(escalation_routes.router,prefix="/Home-Care/Escalations",tags=["Escalations"])
 
 app.get("/")
 def read_root():

@@ -12,3 +12,4 @@ class LogModel(BaseModel):
     scheduled_visit:datetime=Field(...)
     duration:str=Field(...)
     notes:str=Field(...)
+    acknowledgement:list[bool]

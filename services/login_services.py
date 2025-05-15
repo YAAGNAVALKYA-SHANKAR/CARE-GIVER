@@ -31,6 +31,7 @@ class LoginServices:
         """
         user=await registered_users.find_one({"email":email})
         if not user:return{"success":False,"message":"User not found."}
+        if not user["username"]:return{"success":False,"message":"User not registered."}
         if user.get("is_locked"):
             lock_time=user.get("lockout_time")
             if lock_time and(datetime.utcnow()-lock_time).total_seconds()<LOCKOUT_DURATION_MINUTES*60:return{"success":False,"message":"Account locked. Try again later."}
