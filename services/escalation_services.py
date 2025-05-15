@@ -29,11 +29,11 @@ class EscalationService:
             raise HTTPException(status_code=400, detail="Escalation already exists for this patient and visit.")
         counter_doc = await escalations.find_one({"function": "ID_counter"})
         counter_value = counter_doc["count"] if counter_doc else 1
-        escalation_id = f"ESC_{counter_value:03d}"
+        escalation_id = f"ESC_{counter_value:04d}"
         dict_data["escalation_id"] = escalation_id
         result = await escalations.insert_one(dict_data)
         if result:
-            return {"success": True, "message": "Escalation added successfully."}
+            return {"success": True, "message": "Escalation added successfully.","Escalation ID:":escalation_id}
         elif Exception:
             raise HTTPException(status_code=500, detail=f"Failed to add escalation.{Exception}")
         

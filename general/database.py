@@ -17,6 +17,7 @@ VISITATION_RECORDS=os.getenv("VISITATIONS")
 DOCTOR_ESCALATIONS=os.getenv("ESCALATIONS")
 VITAL_READINGS=os.getenv("VITALS_READING")
 LOGS=os.getenv("LOGS")
+DOCUMENTATION=os.getenv("DOCUMENTATION")
 USERS=os.getenv("USERS")
 NURSING=os.getenv("NURSING_CARE")
 client=AsyncIOMotorClient(MONGO_URI)
@@ -29,6 +30,7 @@ vitals=db[VITAL_READINGS]
 logs=db[LOGS]
 registered_users=db[USERS]
 nursing=db[NURSING]
+documents=db[DOCUMENTATION]
 async def init_db():
     existing_collections=await db.list_collection_names()
     async def create_collection(collection_name):
@@ -47,6 +49,7 @@ async def init_db():
     await create_collection(LOGS)
     await create_collection(USERS)
     await create_collection(NURSING)
+    await create_collection(DOCUMENTATION)
 
     """
     Create indexes for unique fields.

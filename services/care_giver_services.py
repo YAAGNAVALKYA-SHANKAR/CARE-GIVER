@@ -24,7 +24,7 @@ class CareGiverServices:
         if exisiting_caregiver:raise HTTPException(status_code=400,detail="Caregiver already exists!")
         counter_doc=await caregivers.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]if counter_doc else 1
-        caregiver_id=f"CG_{counter_value:03d}"
+        caregiver_id=f"CG_{counter_value:04d}"
         ordered_data=OrderedDict([("caregiver_id",caregiver_id),*caregiver_data.dict().items()])
         result=await caregivers.insert_one(ordered_data)
         await db.create_collection(caregiver_id)

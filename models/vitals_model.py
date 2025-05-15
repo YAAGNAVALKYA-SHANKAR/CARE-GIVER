@@ -1,4 +1,5 @@
 from pydantic import BaseModel,Field
+from datetime import datetime
 class VitalsModel(BaseModel):
     """
     VitalsModel to represent a patient's vitals in the system.
@@ -11,3 +12,4 @@ class VitalsModel(BaseModel):
     respiratory_rate:int=Field(...)
     SpO2:float=Field(...)
     blood_glucose:float=Field(...)
+    measured_at:datetime=Field(...)

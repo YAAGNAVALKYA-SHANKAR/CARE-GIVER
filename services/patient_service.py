@@ -20,7 +20,7 @@ class PatientServices:
         """
         counter_doc=await patients.find_one({"function":"ID_counter"})
         counter_value=counter_doc["count"]if counter_doc else 1
-        patient_id=f"PAT_{counter_value:03d}"
+        patient_id=f"PAT_{counter_value:04d}"
         ordered_data=OrderedDict([("patient_id",patient_id),*patient_data.dict().items()])
         assigned_caregivers=ordered_data["assigned_caregivers"]
         for caregiver in assigned_caregivers:Security.is_valid_id(caregiver,prefix="CG")

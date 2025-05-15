@@ -57,9 +57,9 @@ class Security:
     def is_valid_id(id_str:str,prefix:str)->bool:
         """
         This function checks if the given ID string matches the expected format.
-        The format is defined as a prefix followed by an underscore and three digits.
+        The format is defined as a prefix followed by an underscore and four digits.
         """
-        pattern=rf"^{prefix}_[0-9]{{3}}$"
+        pattern=rf"^{prefix}_[0-9]{{4}}$"
         result=bool(re.match(pattern,id_str))
         if result:return result
         elif not result:raise HTTPException(status_code=400,detail="Invalid ID!")

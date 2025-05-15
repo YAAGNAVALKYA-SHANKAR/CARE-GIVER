@@ -11,5 +11,5 @@ class LogModel(BaseModel):
     vitals_id:str=Field(...)
     scheduled_visit:datetime=Field(...)
     duration:str=Field(...)
-    notes:str=Field(...)
+    clinical_notes:str=Field(...)
     acknowledgement:list[bool]

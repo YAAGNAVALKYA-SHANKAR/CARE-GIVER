@@ -20,3 +20,12 @@ class VisitModel(BaseModel):
     visit_longitude:float=Field(...)
     task:list[str]=Field(...)
     remarks:str=Field(...)
+
+class SummaryModel(BaseModel):
+    """
+    SummaryModel to represent the summary of a visit in the system
+    """
+    patient_id:str=Field(...)
+    visit_id:str=Field(...)
+    vitals_id:str=Field(...)
+    doc_id:str=Field(...)

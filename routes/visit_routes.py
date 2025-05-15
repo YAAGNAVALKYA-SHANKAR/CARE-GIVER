@@ -1,7 +1,7 @@
 from fastapi import APIRouter,Depends, UploadFile, File
 from services.visit_services import VisitServices
 from models.log_model import LogModel
-from models.visit_model import VisitModel
+from models.visit_model import VisitModel, SummaryModel
 from models.vitals_model import VitalsModel
 from general.security import Security
 router=APIRouter()
@@ -11,7 +11,7 @@ service=VisitServices()
 async def add_visit(visit_data:VisitModel):return await service.add_visit(visit_data)
 
 @router.post("/add-visit-details.{caregiver_id}")
-async def add_visit_details(visit_data:VisitModel,current_user:dict=Depends(Security.get_current_user)):return await service.add_visit_details(visit_data)
+async def add_visit_details(visit_data:VisitModel,visit_id:str,current_user:dict=Depends(Security.get_current_user)):return await service.add_visit_details(visit_data,visit_id)
 
 @router.post("/add-vitals/{patient_id}")
 async def add_vitals(vitals_data:VitalsModel,current_user:dict=Depends(Security.get_current_user)):return await service.add_vitals(vitals_data)
@@ -24,3 +24,6 @@ async def start_visit(visit_id:str,current_user:dict=Depends(Security.get_curren
 
 @router.post("/finish-visit/{visit_id}")
 async def finish_visit(log_data:LogModel,current_user:dict=Depends(Security.get_current_user)):return await service.finish_visit(log_data)
+
+@router.get("/view-summary{visit_id}")
+async def view_summary(summary_data:SummaryModel,current_user:dict=Depends(Security.get_current_user)):return await service.view_summary(summary_data)
