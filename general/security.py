@@ -34,7 +34,8 @@ class Security:
             username=payload.get("sub")
             if username is None:raise HTTPException(status_code=401, detail="Invalid token payload.")
             return {"username": username}
-        except JWTError:raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Could not validate credentials")
+        except JWTError as e:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail=f"Could not validate credentials. Error:{e}")
     def verify_access_token(token:str):
         """
         This function verifies the JWT token and returns the payload if valid.
