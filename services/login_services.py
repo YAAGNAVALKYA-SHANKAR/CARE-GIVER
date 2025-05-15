@@ -47,6 +47,8 @@ class LoginServices:
         access_token=Security.create_access_token(data={"sub": user["username"]},expires_delta=timedelta(minutes=60))
         user["access_token"]=access_token
         await registered_users.update_one({"email":email},{"$set":{"failed_attempts":0,"is_locked":False,"lockout_time":None}})
+        caregiver=await caregivers.find_one({"email":email})
+        user["caregiver_id"]=caregiver.get("caregiver_id")
         user.pop("_id",None)
         user.pop("password",None)
         user.pop("is_active",None)
