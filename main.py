@@ -49,7 +49,7 @@ app.include_router(patient_routes.router,prefix="/Home-Care/Patients",tags=["Pat
 app.include_router(visit_routes.router,prefix="/Home-Care/Visitations",tags=["Visits"])
 app.include_router(login_routes.router,prefix="/Home-Care/Login",tags=["Login"])
 app.include_router(escalation_routes.router,prefix="/Home-Care/Escalations",tags=["Escalations"])
-app.include_router(general_routes.router,prefix="?Home-Care/General",tags=["General"])
+app.include_router(general_routes.router,prefix="/Home-Care/General",tags=["General"])
 
 app.get("/")
 def read_root():
