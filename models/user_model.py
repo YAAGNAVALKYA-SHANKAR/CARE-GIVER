@@ -13,6 +13,7 @@ class UserModel(BaseModel):
     class Config:
         orm_mode = True
 class SignupModel(BaseModel):
+    username:str=Field(...)
     email:EmailStr=Field(...)
     password:str=Field(...,min_length=8)
     confirm_password:str=Field(...,min_length=8)
