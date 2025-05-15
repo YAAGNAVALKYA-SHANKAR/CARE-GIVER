@@ -25,6 +25,7 @@ pymongo==4.13.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
 python-jose==3.4.0
+python-multipart==0.0.20
 pytz==2025.2
 rsa==4.9.1
 six==1.17.0
